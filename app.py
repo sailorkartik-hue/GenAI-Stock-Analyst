@@ -47,11 +47,22 @@ if st.button("Analyze Stock"):
 
         # ================= NEWS =================
         st.subheader("📰 Latest News Headlines")
-        news = ticker.news[:5]
-        news_text = ""
-        for n in news:
-            st.write(f"- **{n['title']}** ({n.get('publisher','')})")
-            news_text += n["title"] + "\n"
+
+news_text = ""
+try:
+    news = ticker.news
+    if news and len(news) > 0:
+        for n in news[:5]:
+            title = n.get("title", "No Title Available")
+            source = n.get("publisher", "Unknown Source")
+            st.write(f"- **{title}** ({source})")
+            news_text += title + "\n"
+    else:
+        st.info("No recent news available for this stock.")
+        news_text = "No major recent news available."
+except:
+    st.info("News data could not be fetched.")
+    news_text = "No major recent news available."
 
         # ================= TECHNICALS =================
         st.subheader("📊 Technical Indicators")
@@ -134,3 +145,4 @@ if st.button("Analyze Stock"):
 
         response = llm(prompt, max_length=900)
         st.success(response[0]["generated_text"])
+
